@@ -1,0 +1,44 @@
+import nltk
+from nltk.chat.util import Chat, reflections
+
+# Load information from file into memory
+def load_information_from_file(file_path):
+    information = {}
+    with open(file_path, 'r') as file:
+        for line in file:
+            question, answer = line.strip().split('|')
+            information[question.strip()] = answer.strip()
+    return information
+
+# Create a chatbot with predefined patterns (optional if you want to keep predefined responses)
+patterns = [
+    (r'hi|hello|hey', ['Hello!', 'Hi there!', 'Hey!']),
+    (r'how are you?', ['I am doing well, thank you!', 'I am fine, thanks for asking.']),
+    (r'what can you do\?', ['I can provide information about the local area.']),
+    # Add more patterns and responses as needed
+]
+chatbot = Chat(patterns, reflections)
+
+# Main function to interact with the chatbot
+def chat_with_bot(information):
+    print("Welcome to the Local Information Chatbot. Type 'quit' to exit.")
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == 'quit':
+            print("Goodbye!")
+            break
+        # Check if the user input matches a stored question
+        if user_input.strip() in information:
+            print("Bot:", information[user_input.strip()])
+        else:
+            # If no match found, use the chatbot's default response
+            print("Bot:", chatbot.respond(user_input))
+
+# Main function to start the chat
+if __name__ == "__main__":
+    nltk.download('punkt')  # Download NLTK tokenizer data
+    nltk.download('averaged_perceptron_tagger')  # Download NLTK POS tagger data
+    # Load information from local file
+    information_file_path = 'local_information.txt'  # Adjust the file path as needed
+    local_information = load_information_from_file(information_file_path)
+    chat_with_bot(local_information)
